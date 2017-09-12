@@ -2,7 +2,7 @@
 
 技术栈：
 
-vue + vue-router   + less + ES6 + webpack + axios + nodejs + mongodb
+vue + vue-router + less + ES6 + webpack + axios + nodejs + mongodb
 
 下载后输入
 npm install

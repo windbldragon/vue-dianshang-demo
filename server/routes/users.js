@@ -176,6 +176,24 @@ router.post('/checkAll',(req,res,next)=>{
       })
     }
   })
-})
+});
+
+router.get('/getAddress',(req,res,next)=>{
+    let userId=req.cookies.userId;
+    Users.findOne({userId:userId},(err,doc)=>{
+      if(err){
+        res.json({
+          status:'1',
+          msg:err.message,
+        })
+      }else {
+        res.json({
+          status:'0',
+          msg:'success',
+          result:doc._doc.addressList
+        })
+      }
+    })
+});
 
 module.exports = router;
