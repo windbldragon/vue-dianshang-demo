@@ -154,7 +154,7 @@
   .goodList-main-right-goods {
     background-color: #fff;
     list-style: none;
-    margin-left: 10px;
+    margin-left: 15px;
     margin-bottom: 10px;
     border: 1px solid #e9e9e9;
     transition: all .5s ease-out;
@@ -171,7 +171,7 @@
   .goods-price {
     margin-left: 10px;
     font-size: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
 
   .goods-price {
@@ -188,8 +188,8 @@
   }
 
   .goodList-main-right-goods img {
-    width: 220px;
-    height: 220px;
+    width: 200px;
+    height: 200px;
   }
 
   .hasChecked {

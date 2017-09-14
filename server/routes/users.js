@@ -14,7 +14,7 @@ router.post('/login', (req, res, next) => {
     userName: userName,
     userPwd: userPwd,
   };
-  Users.findOne(params, (err,doc) => {
+  Users.findOne(params, (err, doc) => {
     if (err) {
       res.json({
         status: '1',
@@ -143,34 +143,34 @@ router.post('/editCart', (req, res, next) => {
   })
 });
 
-router.post('/checkAll',(req,res,next)=>{
-  let userId=req.cookies.userId;
-  let checkAllflag=req.body.checkAllflag;
-  Users.findOne({userId:userId},(err,doc)=>{
-    if(err){
+router.post('/checkAll', (req, res, next) => {
+  let userId = req.cookies.userId;
+  let checkAllflag = req.body.checkAllflag;
+  Users.findOne({userId: userId}, (err, doc) => {
+    if (err) {
       res.json({
-        status:'1',
-        msg:err.message,
+        status: '1',
+        msg: err.message,
       })
-    }else {
-      doc._doc.cartList.map((item)=>{
-        if(checkAllflag==='0'){
-          item.checked='0'
-        }else {
-          item.checked='1'
+    } else {
+      doc._doc.cartList.map((item) => {
+        if (checkAllflag === '0') {
+          item.checked = '0'
+        } else {
+          item.checked = '1'
         }
       })
-      doc.save((err,doc)=>{
-        if(err){
+      doc.save((err, doc) => {
+        if (err) {
           res.json({
-            status:'1',
-            msg:err.message,
+            status: '1',
+            msg: err.message,
           })
-        }else {
+        } else {
           res.json({
-            status:'0',
-            msg:'success',
-            result:doc._doc
+            status: '0',
+            msg: 'success',
+            result: doc._doc
           })
         }
       })
@@ -178,22 +178,85 @@ router.post('/checkAll',(req,res,next)=>{
   })
 });
 
-router.get('/getAddress',(req,res,next)=>{
-    let userId=req.cookies.userId;
-    Users.findOne({userId:userId},(err,doc)=>{
-      if(err){
-        res.json({
-          status:'1',
-          msg:err.message,
-        })
-      }else {
-        res.json({
-          status:'0',
-          msg:'success',
-          result:doc._doc.addressList
-        })
-      }
-    })
+router.get('/getAddress', (req, res, next) => {
+  let userId = req.cookies.userId;
+  Users.findOne({userId: userId}, (err, doc) => {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message,
+      })
+    } else {
+      res.json({
+        status: '0',
+        msg: 'success',
+        result: doc._doc.addressList,
+      })
+    }
+  })
+});
+
+router.post('/setDefaultAddress', (req, res, next) => {
+  let userId = req.cookies.userId;
+  let addressId = req.body.addressId;
+  Users.findOne({userId: userId}, (err, doc) => {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message
+      })
+    } else {
+      doc._doc.addressList.map(item => {
+        if (item.addressId == addressId) {
+          item.isDefault = true;
+        } else {
+          item.isDefault = false;
+        }
+      })
+      doc.save((err, doc) => {
+        if (err) {
+          res.json({
+            status: '1',
+            msg: err.message,
+          })
+        } else {
+          res.json({
+            status: '0',
+            msg: 'success',
+            result: doc._doc.addressList,
+          })
+        }
+      })
+    }
+  })
+});
+
+router.get('/delAddress', (req, res, next) => {
+  let userId = req.cookies.userId;
+  let addressId = req.param('addressId');
+  Users.update({userId: userId}, {$pull: {addressList: {addressId: addressId}}}, (err, doc) => {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message,
+      })
+    } else {
+      Users.findOne({userId: userId}, (err,doc)=>{
+        if(err){
+          res.json({
+            status:'1',
+            msg:err.message
+          })
+        }else {
+          res.json({
+            status:'0',
+            msg:'success',
+            result:doc._doc.addressList,
+          })
+        }
+      })
+    }
+  })
 });
 
 module.exports = router;
