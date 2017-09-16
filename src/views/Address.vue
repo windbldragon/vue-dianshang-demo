@@ -10,7 +10,7 @@
           <h3>收货地址</h3>
           <div class="address-main">
             <div class="address-one" v-for="(item,index) in addressListFilter"
-                 @click="checkHandle(index)"
+                 @click="checkHandle(index,item)"
                  :class="{'checked-style':checkedIndex==index}">
               <p>{{item.userName}}</p>
               <p>{{item.streetName}}</p>
@@ -34,7 +34,7 @@
             <!--<p class="address-method">发送方式</p>-->
           <!--</div>-->
         <!--</div>-->
-        <div class="address-checkout">
+        <div class="address-checkout" @click="goToCheck">
           <p>结算</p>
         </div>
       </div>
@@ -159,7 +159,8 @@
         btn: '',
         alertModel: false,
         showOtherBtn: false,
-        addressId: ''
+        addressId: '',
+        checkedAddressId:''
       }
     },
     components: {
@@ -179,6 +180,7 @@
       init(){
         axios.get('/users/getAddress').then((res) => {
           this.addressList = res.data.result;
+          this.checkedAddressId=this.addressList.length>0?this.addressList[0].addressId:''
         })
           .catch(err => {
             alert(err);
@@ -191,8 +193,9 @@
           this.limitArr = 3
         }
       },
-      checkHandle(index){
+      checkHandle(index,address){
         this.checkedIndex = index;
+        this.checkedAddressId=address.addressId;
         console.log(this.checkedIndex);
       },
       setAddress(addressId){
@@ -224,6 +227,9 @@
           .catch(err=>{
               alert(err);
           })
+      },
+      goToCheck(){
+          this.$router.push({path:'/order',query:{addressId:this.checkedAddressId}})
       }
     }
   }

@@ -5,7 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var ejs=require('ejs')
-
+var moment=require('moment')
+global.moment=moment
 
 var index = require('./routes/index');
 var users = require('./routes/users');

@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var Users = require('../models/user');
+// var moment=require('moment')
+
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -257,6 +259,85 @@ router.get('/delAddress', (req, res, next) => {
       })
     }
   })
+});
+
+router.post('/pay',(req,res,next)=>{
+  let userId=req.cookies.userId;
+  let addressId=req.body.addressId;
+  let orderTotalFee=req.body.orderTotalFee;
+  let creatDate=moment(new Date).format('YYYY-MM-DD');
+  let orderId='';
+  Users.findOne({userId:userId},(err,doc)=>{
+    if(err){
+      res.json({
+        status:'1',
+        msg:err.message
+      })
+    }else {
+      let userAddress='';
+      let userGoodsList=[];
+      doc._doc.addressList.some(item=>{
+        if(item.addressId==addressId){
+          userAddress=item;
+          return true;
+        }
+      })
+      doc._doc.cartList.map(item=>{
+        if(item.checked=='1'){
+          userGoodsList.push(item)
+        }
+      });
+      let platform='222';
+      //显示随机0~1，乘以10，随机0~10，floor之后是0~9整数
+      let r1=Math.floor(Math.random()*10);
+      let r2=Math.floor(Math.random()*10);
+      let saveDate=Date.now()
+      let orderId=platform+r1+saveDate+r2;
+      let orderInfo={
+        orderId,
+        userAddress,
+        userGoodsList,
+        orderStatus:'1',
+        orderTotalFee,
+        creatDate,
+      };
+      //在orderList中插入订单方法一：
+      // doc._doc.orderList.push(orderInfo);
+      // doc.save((err,doc)=>{
+      //   if(err){
+      //     res.json({
+      //       status:'1',
+      //       msg:err.message
+      //     })
+      //   }else {
+      //     res.json({
+      //       status:'0',
+      //       msg:'success',
+      //       result:doc._doc
+      //     })
+      //   }
+      // })
+      //方法二：实践证明，这两种方法都可以，反而觉得第一种方法更简单明了
+      Users.update({userId:userId},{$push:{orderList:orderInfo}},(err,doc)=>{
+        if(err){
+          res.json({
+            status:'1',
+            msg:err.message
+          })
+        }else {
+          Users.findOne({userId:userId},(err,doc)=>{
+            res.json({
+              status:'0',
+              msg:'success',
+              result:doc._doc
+            })
+          })
+
+        }
+      })
+    }
+  })
+
 });
 
 module.exports = router;
